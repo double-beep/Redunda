@@ -3,9 +3,7 @@ class ApplicationController < ActionController::Base
 
   Role.global_role_names.each do |role|
     define_method "verify_#{role}" do
-      unless current_user&.has_role?(role)
-        raise ActionController::RoutingError.new('Not Found')
-      end
+      raise ActionController::RoutingError, 'Not Found' unless current_user&.has_role?(role)
     end
   end
 end

@@ -1,11 +1,11 @@
 class BotsController < ApplicationController
-  before_action :set_bot, only: [:show, :edit, :update, :destroy, :web_remove_data, :add_event]
-  before_action :set_bot_from_key, only: [:get_data, :update_data, :remove_data, :list_data]
-  before_action :set_data, only: [:get_data, :update_data, :remove_data, :web_remove_data]
-  before_action :authenticate_user!, except: [:index, :show, :get_data, :update_data, :remove_data, :list_data, :add_event]
-  before_action :check_bot_ownership, only: [:edit, :update, :destroy]
+  before_action :set_bot, only: %i[show edit update destroy web_remove_data add_event]
+  before_action :set_bot_from_key, only: %i[fetch_data update_data remove_data list_data]
+  before_action :set_data, only: %i[fetch_data update_data remove_data web_remove_data]
+  before_action :authenticate_user!, except: %i[index show fetch_data update_data remove_data list_data add_event]
+  before_action :check_bot_ownership, only: %i[edit update destroy]
 
-  protect_from_forgery except: [:get_data, :update_data, :remove_data, :add_event]
+  protect_from_forgery except: %i[fetch_data update_data remove_data add_event]
 
   # GET /bots
   # GET /bots.json
@@ -15,8 +15,7 @@ class BotsController < ApplicationController
 
   # GET /bots/1
   # GET /bots/1.json
-  def show
-  end
+  def show; end
 
   # GET /bots/new
   def new
@@ -24,8 +23,7 @@ class BotsController < ApplicationController
   end
 
   # GET /bots/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /bots
   # POST /bots.json
@@ -69,7 +67,6 @@ class BotsController < ApplicationController
     end
   end
 
-
   # POST /bots/1/collaborators
   # POST /bots/1/collaborators.json
   def add_collaborator
@@ -97,12 +94,10 @@ class BotsController < ApplicationController
 
     respond_to do |format|
       format.html { redirect_to edit_bot_path(@bot), flash: { success: 'Collaborator was successfully added.' } }
-      format.js   { }
+      format.js   {}
       format.json { head :no_content }
     end
   end
-
-
 
   def remove_collaborator
     @bot = Bot.find(params[:bot])
@@ -120,19 +115,17 @@ class BotsController < ApplicationController
 
     respond_to do |format|
       format.html { redirect_to edit_bot_path(@bot), flash: { success: 'Collaborator was successfully removed.' } }
-      format.js   { }
+      format.js   {}
       format.json { head :no_content }
     end
   end
 
-
-
-  def get_data
-    render body: @bot_data.data, content_type: "application/octet-stream"
+  def fetch_data
+    render body: @bot_data.data, content_type: 'application/octet-stream'
   end
 
   def update_data
-    if @bot_data.nil?  # insert a new BotData
+    if @bot_data.nil? # insert a new BotData
       @bot_data = BotData.new(bot: @bot, key: params[:data_key], data: request.raw_post)
       @bot_data.save
     else
@@ -148,7 +141,7 @@ class BotsController < ApplicationController
   end
 
   def web_remove_data
-    unless current_user.is_owner?(@bot) || current_user.is_collaborator?(@bot) ||current_user.is_admin?
+    unless current_user.is_owner?(@bot) || current_user.is_collaborator?(@bot) || current_user.is_admin?
       respond_to do |format|
         format.html { redirect_to bots_path(@bot), flash: { error: 'You do not have permission to remove bot data.' } }
       end
@@ -165,16 +158,11 @@ class BotsController < ApplicationController
     @bot_data = BotData.where(bot: @bot)
   end
 
-
   # POST bots/1/events/name
   def add_event
-    json_headers = request.headers.map { |k, v|
-      if v.is_a?(String) && k.start_with?('HTTP')
-        next [k.gsub('HTTP_', '').titleize.gsub(' ', '-'), v]
-      else
-        next nil
-      end
-    }.compact.to_h.to_json
+    json_headers = request.headers.map do |k, v|
+      next [k.gsub('HTTP_', '').titleize.gsub(' ', '-'), v] if v.is_a?(String) && k.start_with?('HTTP')
+    end.compact.to_h.to_json
 
     if params[:broadcast]
       BotInstance.where(bot: @bot).each do |instance|
@@ -187,8 +175,8 @@ class BotsController < ApplicationController
     end
   end
 
-
   private
+
   # Use callbacks to share common setup or constraints between actions.
   def set_bot
     @bot = Bot.find(params[:id])
@@ -200,11 +188,8 @@ class BotsController < ApplicationController
   end
 
   def check_bot_ownership
-    unless current_user.is_owner?(@bot) || current_user.is_admin?
-      render :status => :forbidden, :plain => "You don't own this bot" and return
-    end
+    render status: :forbidden, plain: "You don't own this bot" and return unless current_user.is_owner?(@bot) || current_user.is_admin?
   end
-
 
   def set_bot_from_key
     @bot = BotInstance.where(key: params[:key]).first!.bot

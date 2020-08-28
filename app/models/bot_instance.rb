@@ -8,50 +8,42 @@ class BotInstance < ApplicationRecord
   belongs_to :user
 
   def human_location
-    return "#{self.user.username}/#{self.location}"
+    "#{user.username}/#{location}"
   end
 
   def status
-    if last_ping.nil?
-      return nil
-    end
+    return nil if last_ping.nil?
+
     if last_ping > 1.minute.ago
-      return :okay
+      :okay
     elsif last_ping < 1.minute.ago && last_ping > 3.minutes.ago
-      return :warn
+      :warn
     else
-      return :dead
+      :dead
     end
   end
 
   def status_class
-    if self.status == :okay
-      return "bot-status-okay"
-    elsif self.status == :warn
-      return "bot-status-warn"
-    elsif self.status == :dead
-      return "bot-status-dead"
-    end
-    return "bot-status-nil"
+    return 'bot-status-okay' if status == :okay
+    return 'bot-status-warn' if status == :warn
+    return 'bot-status-dead' if status == :dead
+
+    'bot-status-nil'
   end
 
   def panel_class
-    if self.status == :okay
-      return "panel-success"
-    elsif self.status == :warn
-      return "panel-warning"
-    elsif self.status == :dead
-      return "panel-danger"
-    end
-    return "panel-default"
-  end
+    return 'panel-success' if status == :okay
+    return 'panel-warning' if status == :warn
+    return 'panel-danger' if status == :dead
 
+    'panel-default'
+  end
 
   def generate_key
     self.key = SecureRandom.hex 32
   end
 
   def populate_priority
-    update(priority: self.id)
+    update(priority: id)
   end
 end

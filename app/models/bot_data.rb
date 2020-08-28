@@ -1,3 +1,3 @@
 class BotData < ApplicationRecord
-    belongs_to :bot
+  belongs_to :bot
 end
