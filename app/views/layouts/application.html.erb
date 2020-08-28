@@ -6,25 +6,25 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-    <%= stylesheet_link_tag    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" %>
-    <%= stylesheet_link_tag "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/css/bootstrap-select.min.css" %>
+    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= stylesheet_link_tag 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' %>
+    <%= stylesheet_link_tag 'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/css/bootstrap-select.min.css' %>
 
-    <%= javascript_include_tag "https://code.jquery.com/jquery-2.2.2.min.js", 'data-turbolinks-track': 'reload' %>
-    <%= javascript_include_tag "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" %>
-    <%= javascript_include_tag "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/js/bootstrap-select.min.js" %>
-    <%= javascript_include_tag "https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.6.0/clipboard.min.js" %>
+    <%= javascript_include_tag 'https://code.jquery.com/jquery-2.2.2.min.js', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js' %>
+    <%= javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/js/bootstrap-select.min.js' %>
+    <%= javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.6.0/clipboard.min.js' %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
     <script>
       App.handler = {
-        'controller': "<%= controller_name %>",
-        'action': "<%= action_name %>"
+        'controller': "<%= controller_name.to_json %>",
+        'action': "<%= action_name.to_json %>"
       };
     </script>
   </head>
 
   <body class="<%= controller.class.name.sub(/Controller$/, '').underscore.dasherize %>">
-    <nav class="navbar navbar-default navbar-static-top <%= "navbar-inverse" unless Rails.env.production? %>">
+    <nav class="navbar navbar-default navbar-static-top <%= 'navbar-inverse' unless Rails.env.production? %>">
       <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
@@ -41,8 +41,8 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav">
-            <li class='<%= controller.class == BotsController ? "active" : "" %>'><%= link_to "bots", bots_path %></li>
-            <li class='<%= controller.class == UsersController ? "active" : "" %>'><%= link_to "users", users_path %></li>
+            <li class='<%= controller.class == BotsController ? 'active' : '' %>'><%= link_to 'bots', bots_path %></li>
+            <li class='<%= controller.class == UsersController ? 'active' : '' %>'><%= link_to 'users', users_path %></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <% if user_signed_in? %>
@@ -52,20 +52,22 @@
                   <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
-                  <li><%= link_to "New bot", new_bot_path %></li>
+                  <li><%= link_to 'New bot', new_bot_path %></li>
                 </ul>
               </li>
               <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><%= current_user.username %> <span class="caret"></span></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                  <%= current_user.username %> <span class="caret"></span>
+                </a>
                 <ul class="dropdown-menu">
-                  <li><%= link_to 'Logout', destroy_user_session_path, :method => :delete %></li>
+                  <li><%= link_to 'Logout', destroy_user_session_path, method: :delete %></li>
                   <% if current_user&.has_role?(:admin) %>
-                    <li><%= link_to 'Admin', url_for(:controller => :admin, :action => :index) %></li>
+                    <li><%= link_to 'Admin', url_for(controller: :admin, action: :index) %></li>
                   <% end %>
                 </ul>
               </li>
             <% else %>
-              <li><%= link_to "sign in", Rails.env.development? ? dev_login_path :  login_auth_url %></li>
+              <li><%= link_to 'sign in', Rails.env.development? ? dev_login_path : login_auth_url %></li>
             <% end %>
             <% if CurrentCommit.present? %>
               <li>

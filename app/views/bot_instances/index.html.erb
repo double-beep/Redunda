@@ -8,21 +8,21 @@
         current_user.is_collaborator?(instance.bot) ||
         current_user.is_admin?) %>
 
-        <br/>
+        <br>
 
         <% if BotInstance.where(bot_id: instance.bot_id).where("priority < ?", instance.priority).exists? %>
-          <%= form_tag("/bots/#{instance.bot_id}/bot_instances/reorder") do%>
-            <%= hidden_field_tag "id", instance.id %>
-            <%= hidden_field_tag "direction", "up" %>
-            <%= submit_tag "▲", class: "submit-arrow" %>
+          <%= form_tag("/bots/#{instance.bot_id}/bot_instances/reorder") do %>
+            <%= hidden_field_tag 'id', instance.id %>
+            <%= hidden_field_tag 'direction', 'up' %>
+            <%= submit_tag '▲', class: 'submit-arrow' %>
           <% end %>
         <% end %>
 
         <% if BotInstance.where(bot_id: instance.bot_id).where("priority > ?", instance.priority).exists? %>
           <%= form_tag("/bots/#{instance.bot_id}/bot_instances/reorder") do %>
-            <%= hidden_field_tag "id", instance.id %>
-            <%= hidden_field_tag "direction", "down" %>
-            <%= submit_tag "▼", class: "submit-arrow" %>
+            <%= hidden_field_tag 'id', instance.id %>
+            <%= hidden_field_tag 'direction', 'down' %>
+            <%= submit_tag '▼', class: 'submit-arrow' %>
           <% end %>
         <% end %>
 
@@ -33,32 +33,30 @@
       <% if instance != instance.bot.preferred_instance %>
         <span class="label label-primary ">Standby</span>
       <% end %>
-      <br/>
+      <br>
       <strong>Last pinged:</strong> <span class="<%= instance.status_class %>">
-        <% if instance.last_ping.present? %><%= time_ago_in_words(instance.last_ping) %> ago<% else %>Never<% end %></span><br/>
+        <% if instance.last_ping.present? %><%= time_ago_in_words(instance.last_ping) %> ago<% else %>Never<% end %></span><br>
       <strong>Owner:</strong> <%= instance.user.username %>
 
-
       <% if user_signed_in? && (instance.user == current_user || current_user.is_admin?) %>
-        <br/>
+        <br>
 
         <a href="#"
         class="owner-instance-key"
         data-key="<%= instance.key %>" data-bot="<%= instance.bot_id %>" data-instance="<%= instance.id %>"
-        data-toggle="modal" data-target="#keyModal"
-        >Key</a> &middot;
+        data-toggle="modal" data-target="#keyModal">Key</a> &middot;
 
-        <%= link_to "Edit", url_for(controller: :bot_instances, action: :edit, bot_id: @bot.id, id: instance.id) %> &middot;
-        <%= link_to "Delete", url_for(controller: :bot_instances, action: :destroy, bot_id: @bot.id, id: instance.id),
-                    class: "text-danger", method: :delete, data: { confirm: "Are you sure you want to do this?" } %>
+        <%= link_to 'Edit', url_for(controller: :bot_instances, action: :edit, bot_id: @bot.id, id: instance.id) %> &middot;
+        <%= link_to 'Delete', url_for(controller: :bot_instances, action: :destroy, bot_id: @bot.id, id: instance.id),
+                    class: 'text-danger', method: :delete, data: { confirm: 'Are you sure you want to do this?' } %>
       <% end %>
-    </li><br/>
+    </li><br>
   <% end %>
 </ul>
 
-<% # Next line doesn't use the generated role helpers like user.is_owner?(bot) because it's more efficient to do it all in one query. %>
-<% if user_signed_in? && (current_user.has_any_role?({:name => :owner, :resource => @bot}, {:name => :collaborator, :resource => @bot}, {:name => :admin}))%>
-  <%= link_to "Create New", new_bot_bot_instance_path %>
+# Next line doesn't use the generated role helpers like user.is_owner?(bot) because it's more efficient to do it all in one query. %>
+<% if user_signed_in? && (current_user.has_any_role?({:name => :owner, :resource => @bot}, {:name => :collaborator, :resource => @bot}, {:name => :admin})) %>
+  <%= link_to 'Create New', new_bot_bot_instance_path %>
 <% end %>
 
-<%= render "key_modal" %>
+<%= render 'key_modal' %>

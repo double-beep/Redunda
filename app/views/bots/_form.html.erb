@@ -2,7 +2,7 @@
   <%= form_for(bot) do |f| %>
     <% if bot.errors.any? %>
       <div id="error_explanation">
-        <h2><%= pluralize(bot.errors.count, "error") %> prohibited this bot from being saved:</h2>
+        <h2><%= pluralize(bot.errors.count, 'error') %> prohibited this bot from being saved:</h2>
 
         <ul>
         <% bot.errors.full_messages.each do |message| %>
@@ -13,22 +13,22 @@
     <% end %>
 
     <div class="field">
-      <%= f.label :name %><br/>
-      <%= f.text_field :name, :class => "form-control" %>
-    </div><br/>
+      <%= f.label :name %><br>
+      <%= f.text_field :name, class: 'form-control' %>
+    </div><br>
 
     <div class="field">
-      <%= f.label :description %><br/>
-      <%= f.text_field :description, :class => "form-control" %>
-    </div><br/>
+      <%= f.label :description %><br>
+      <%= f.text_field :description, class: 'form-control' %>
+    </div><br>
 
     <div class="field">
-      <%= f.label :repository %><br/>
-      <%= f.url_field :repository, :class => "form-control" %>
-    </div><br/>
+      <%= f.label :repository %><br>
+      <%= f.url_field :repository, class: 'form-control' %>
+    </div><br>
 
     <div class="actions">
-      <%= f.submit "Save", :class => "btn btn-primary" %>
+      <%= f.submit 'Save', class: 'btn btn-primary' %>
     </div>
   <% end %>
 </p>
@@ -40,12 +40,14 @@
       <tr>
         <th>Collaborators</th>
         <th style="text-align:right">
-          <%= form_tag add_collaborator_path(bot), class: "form-inline", remote: true do %>
+          <%= form_tag add_collaborator_path(bot), class: 'form-inline', remote: true do %>
             <div class="form-group">
-              <%= select_tag :collaborator, options_for_select(bot.eligible_collaborators), { :multiple => false, :class => "form-control selectpicker add-collaborator-picker", "data-live-search" => true, "data-actions-box" => true, "data-dropup-auto" => false, :title => "Add a collaborator" } %>
+              <%= select_tag :collaborator, options_for_select(bot.eligible_collaborators),
+                             { :multiple => false, :class => 'form-control selectpicker add-collaborator-picker', 'data-live-search' => true,
+                               'data-actions-box' => true, 'data-dropup-auto' => false, :title => 'Add a collaborator' } %>
             </div>
             <div class="form-group actions">
-              <%= submit_tag "Add", :class => "btn btn-primary" %>
+              <%= submit_tag 'Add', class: 'btn btn-primary' %>
             </div>
           <% end %>
         </th>
@@ -53,7 +55,7 @@
     </thead>
     <tbody>
       <% User.with_role(:collaborator, bot).each do |user| %>
-        <%= render 'collaborator', :user => user, :bot => bot %>
+        <%= render 'collaborator', user: user, bot: bot %>
       <% end %>
     </tbody>
   </table>
@@ -69,7 +71,7 @@
         <tr>
           <td><%= data.key %></td>
           <td style="text-align:right">
-            <%= link_to 'Remove', web_remove_data_path(id: bot.id, data_key: data.key), :method => :delete, :remote => true %>
+            <%= link_to 'Remove', web_remove_data_path(id: bot.id, data_key: data.key), method: :delete, remote: true %>
           </td>
         </tr>
       <% end %>

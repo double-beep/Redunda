@@ -4,24 +4,25 @@
       <div class="col-md-4">
         <div id="bot-<%= bot.id %>" class="<%= "panel #{bot.bot_instances
         .order(:last_ping).reverse
-        .select {|instance| !instance.last_ping.nil?}
-        .first&.panel_class || "panel-default"}" %>"
-        >
+        .reject { |instance| instance.last_ping.nil? }
+        .first&.panel_class || 'panel-default'}" %>">
           <div class="panel-heading">
-            <h3><%= bot.name %><br/>
+            <h3><%= bot.name %><br>
               <small>by <%= user_link(User.with_role(:owner, bot).first) %></small>
             </h3>
           </div>
           <div class="panel-body">
             <% if bot.description.present? %><p><%= bot.description %></p><% end %>
             <% if bot.repository.present? %><p class="text-muted">Repository: <%= repo_link(bot) %></p><% end %>
-            <p><strong><%= link_to "Instances", url_for(controller: :bot_instances, action: :index, bot_id: bot.id) %></strong></p>
-            <ul class="bot-instance-dash-list<%= " no-collaborators" unless bot.collaborators.any? %>">
-              <% bot.bot_instances.order(:priority).where("last_ping > ?", 1.hour.ago).each do |instance| %>
-                <%= render 'bot_instances/list_item', :instance => instance %>
+            <p><strong><%= link_to 'Instances', url_for(controller: :bot_instances, action: :index, bot_id: bot.id) %></strong></p>
+            <ul class="bot-instance-dash-list<%= ' no-collaborators' unless bot.collaborators.any? %>">
+              <% bot.bot_instances.order(:priority).where('last_ping > ?', 1.hour.ago).each do |instance| %>
+                <%= render 'bot_instances/list_item', instance: instance %>
               <% end %>
               <% unless bot.bot_instances.where("last_ping > ?", 1.hour.ago).any? %>
-                <li><em class="bot-status-dead">No active instances. <%= link_to "see all", url_for(controller: :bot_instances, action: :index, bot_id: bot.id) %></em></li>
+                <li><em class="bot-status-dead">
+                  No active instances. <%= link_to 'see all', url_for(controller: :bot_instances, action: :index, bot_id: bot.id) %>
+                </em></li>
               <% end %>
             </ul>
             <% if bot.collaborators.any? %>
@@ -35,7 +36,7 @@
           </div>
           <% if current_user&.is_owner?(bot) || current_user&.is_admin? %>
             <div class="panel-footer">
-              <%= link_to "edit", edit_bot_path(bot) %>
+              <%= link_to 'edit', edit_bot_path(bot) %>
             </div>
           <% end %>
         </div>
