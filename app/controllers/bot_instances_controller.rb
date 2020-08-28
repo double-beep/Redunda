@@ -2,7 +2,7 @@ class BotInstancesController < ApplicationController
   protect_from_forgery except: :status_ping
 
   before_action :authenticate_user!, :only => [:new, :create, :edit, :update, :destroy, :revoke_key]
-  before_action :set_bot_instance, only: [:show, :edit, :update, :destroy, :reorder, :revoke_key]
+  before_action :set_bot_instance, only: [:edit, :update, :destroy, :reorder, :revoke_key]
   before_action :set_bot_instance_from_key, only: [:status_ping, :show_events]
   before_action :set_bot, except: [:status_ping, :show_events]
   before_action :check_instance_permissions, only: [:edit, :update, :destroy, :revoke_key]
