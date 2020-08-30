@@ -1,10 +1,10 @@
 Rails.application.routes.draw do
   get 'bot_instances/show'
 
-    get 'users', to: 'users#index'
+  get 'users', to: 'users#index'
 
   devise_for :users
-  root to: "bots#index"
+  root to: 'bots#index'
 
   get 'bots/data.json', to: 'bots#list_data', as: :list_data
   get 'bots/data/:data_key', to: 'bots#get_data', as: :get_data, constraints: {:data_key => /[\w\.]+/}
@@ -21,16 +21,17 @@ Rails.application.routes.draw do
   post 'bots/:bot/collaborators', to: 'bots#add_collaborator', as: :add_collaborator
   delete 'bots/:bot/collaborators/:collaborator', to: 'bots#remove_collaborator', as: :remove_collaborator
 
+  get 'bots/:id', to: 'bots#show', as: :bot_show
   post 'bots/:bot_id/bot_instances/reorder', to: 'bot_instances#reorder', as: :reorder
 
   post 'bots/:bot_id/bot_instances/:id/revoke_key', to: 'bot_instances#revoke_key', as: :revoke_key
 
   post 'status.json', to: 'bot_instances#status_ping', as: :status_ping
-  get "status/code.json", to: "code_status#api"
-  get "status/code", as: :code_status, to: "code_status#index"
+  get 'status/code.json', to: 'code_status#api'
+  get 'status/code', as: :code_status, to: 'code_status#index'
 
 
-  scope "authentication" do
+  scope 'authentication' do
     get 'login_redirect_target', to: 'authentication#login_redirect_target'
 
     if Rails.env.development?
@@ -39,7 +40,7 @@ Rails.application.routes.draw do
     end
   end
 
-  scope "admin" do
+  scope 'admin' do
     root to: 'admin#index'
     get 'permissions', to: 'admin#user_permissions'
     put 'permissions', to: 'admin#update_permissions'
