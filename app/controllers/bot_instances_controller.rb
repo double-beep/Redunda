@@ -110,10 +110,18 @@ class BotInstancesController < ApplicationController
     end
   end
 
+  # POST status.json
   def status_ping
     @bot_instance.update(last_ping: DateTime.current, version: params[:version].nil? ? 'unspecified' : params[:version])
-
     @bot = @bot_instance.bot
+    @newer_stat = @bot_instance.statistic.order(:created_at).last
+    api_quota = params[:quota].presence || nil
+    if !@newer_stat.present? || Time.now.to_i - @newer_stat.created_at.to_i > 3600
+      @statistic = Statistic.new(bot_instance_id: @bot_instance.id, pings_sent: 1, api_quota: api_quota)
+      @statistic.save!
+    else
+      @newer_stat.update(pings_sent: @newer_stat.pings_sent + 1, api_quota: api_quota.presence || @newer_stat.api_quota)
+    end
 
     ActionCable.server.broadcast 'status_updates', { bot_id: @bot.id, instance_id: @bot_instance.id,
                                                      ping: { ago: ActionController::Base.helpers.time_ago_in_words(DateTime.current),

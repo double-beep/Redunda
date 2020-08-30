@@ -7,7 +7,7 @@
         .reject { |instance| instance.last_ping.nil? }
         .first&.panel_class || 'panel-default'}" %>">
           <div class="panel-heading">
-            <h3><%= bot.name %><br>
+            <h3><%= link_to bot.name, url_for(controller: :bots, action: :show, id: bot.id) %><br>
               <small>by <%= user_link(User.with_role(:owner, bot).first) %></small>
             </h3>
           </div>

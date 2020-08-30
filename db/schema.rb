@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170608220107) do
+ActiveRecord::Schema.define(version: 20200828151933) do
 
   create_table "bot_data", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "bot_id"
@@ -32,7 +32,7 @@ ActiveRecord::Schema.define(version: 20170608220107) do
     t.integer "priority"
     t.string "version", default: "unspecified", null: false
     t.index ["bot_id"], name: "index_bot_instances_on_bot_id"
-    t.index ["key"], name: "index_bot_instances_on_key", unique: true
+    t.index ["key"], name: "index_bot_instances_on_key", unique: true, length: { key: 40 }
     t.index ["user_id"], name: "index_bot_instances_on_user_id"
   end
 
@@ -65,6 +65,14 @@ ActiveRecord::Schema.define(version: 20170608220107) do
     t.index ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id", length: { name: 100, resource_type: 100 }
     t.index ["name"], name: "index_roles_on_name", length: { name: 100 }
     t.index ["resource_type", "resource_id"], name: "index_roles_on_resource_type_and_resource_id"
+  end
+
+  create_table "statistics", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "bot_instance_id"
+    t.integer "pings_sent"
+    t.integer "api_quota"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|

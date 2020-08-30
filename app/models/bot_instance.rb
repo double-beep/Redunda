@@ -6,6 +6,7 @@ class BotInstance < ApplicationRecord
 
   belongs_to :bot
   belongs_to :user
+  has_many :statistic
 
   def human_location
     "#{user.username}/#{location}"

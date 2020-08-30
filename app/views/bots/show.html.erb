@@ -1,26 +1,49 @@
-<h3><%= @bot.name %><br>
-<small>by <%= @bot.owner.username %></small></h3>
+<h3>Statistics for <%= @bot.name %></h3><br>
 
-<p class="text-muted"><%= @bot.description %></p>
+<% if @bot_instances.present? && @bot_instance.present? %>
+  <ul class="nav nav-tabs">
+    <% @bot_instances.each do |instance| %>
+      <li class="<%= 'active' if @bot_instance.id == instance.id %>">
+        <%= link_to instance.location, url_for(controller: :bots, action: :show, instance: instance.id) %>
+      </li>
+    <% end %>
+  </ul>
+  <br>
 
-<p class="text-muted">Repository: <%= repo_link(@bot) %></p>
+  <%= line_chart [
+        { name: 'Pings sent', data: @statistics.group_by_hour(:created_at, range: 7.days.ago.to_date..Time.now).sum(:pings_sent) }
+      ], colors: ['#76ADE1'] %>
 
-<strong>Collaborators</strong>
-<ul>
-  <% @bot.collaborators.each do |user| %>
-    <li><%= user_link user %></li>
-  <% end %>
-</ul>
+  <%= line_chart [
+        { name: 'Quota remaining', data:  @statistics.where(created_at: 3.days.ago.to_date..Time.now).where.not(api_quota: -1)
+                                                     .select(:created_at, :api_quota).map { |s| [s.created_at, s.api_quota] }.to_h }
+      ], colors: ['#e0a976'] %>
 
-<strong><%= link_to 'Instances', url_for(controller: :bot_instances, action: :index, bot_id: @bot.id) %></strong>
-<ul>
-  <% @bot.bot_instances.each do |instance| %>
-    <%= render 'bot_instances/list_item', instance: instance %>
-  <% end %>
-</ul>
+<br>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Pings sent</th>
+      <th>API quota</th>
+      <th>At</th>
+    </tr>
+  </thead>
 
-<% if user_signed_in? && (current_user.is_owner? @bot || current_user.is_admin?) %>
-  <%= link_to 'Edit', url_for(controller: :bots, action: :edit, id: @bot.id) %> &middot;
-  <%= link_to 'Delete', url_for(controller: :bots, action: :destroy, id: @bot.id),
-              class: 'text-danger', method: :delete, data: { confirm: 'Are you sure you want to do this?' } %>
+  <tbody>
+    <% @statistics.order(Arel.sql('created_at DESC')).each do |statistic| %>
+      <tr>
+        <td><%= statistic.pings_sent %></td>
+        <td><%= statistic.api_quota %></td>
+        <td title="<%= statistic.created_at %>"><%= time_ago_in_words statistic.created_at %> ago</td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<div class="text-center">
+  <%= will_paginate @statistics, renderer: BootstrapPagination::Rails %>
+</div>
+
+<% else %>
+  This bot has no active instances
 <% end %>

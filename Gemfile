@@ -47,6 +47,8 @@ gem 'redis', '~> 3.0'
 
 gem 'erb_lint', require: false
 gem 'rubocop'
+gem 'chartkick'
+gem 'groupdate', '~> 3.0.0'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

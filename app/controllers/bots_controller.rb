@@ -14,8 +14,11 @@ class BotsController < ApplicationController
   end
 
   # GET /bots/1
-  # GET /bots/1.json
-  def show; end
+  def show
+    @bot_instances = @bot.bot_instances.order(:last_ping).reverse
+    @bot_instance = @bot.bot_instances.where(id: params[:instance]).first.presence || @bot_instances.first
+    @statistics = @bot_instance.statistic.paginate(page: params[:page], per_page: 100)
+  end
 
   # GET /bots/new
   def new
