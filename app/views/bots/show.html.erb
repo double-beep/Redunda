@@ -5,8 +5,8 @@
     <% @bot_instances.each do |instance| %>
       <li class="<%= 'active' if @bot_instance.id == instance.id %>">
         <% instance_name = instance.location %>
-        <% instance_name += '&nbsp;<span class="label label-primary">Standby</span>' if instance != instance.bot.preferred_instance %>
-        <%= link_to instance_name.html_safe, url_for(controller: :bots, action: :show, instance: instance.id) %>
+        <% instance_name += ' (standby)' if instance != instance.bot.preferred_instance %>
+        <%= link_to instance_name, url_for(controller: :bots, action: :show, instance: instance.id) %>
       </li>
     <% end %>
   </ul>
